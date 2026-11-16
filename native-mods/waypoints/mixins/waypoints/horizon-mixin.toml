@@ -1,0 +1,49 @@
+[mod]
+id = "waypoints"
+version = "0.1.0"
+
+# No pin: Starling's mod build sets the commit it builds on. The mod only uses
+# hook points (hud, command, commands) and the game's native_* helpers.
+
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "waypoints"
+source = "runtime.rs"
+
+# The HUD: the saved places near the player, as a box in the top left corner.
+[[injection]]
+id = "hud"
+kind = "HEAD"
+hook = "hud"
+hook_version = 1
+helper = "hud.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "corners", ty = "&mut horizon_client::extras_hud::Corners", value = "&mut *corners" },
+]
+
+# `/wp add NAME`, `/wp remove NAME`, `/wp list`, typed in chat.
+[[injection]]
+id = "command"
+kind = "HEAD"
+hook = "command"
+hook_version = 1
+helper = "command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "&mut *ran" },
+]
+
+# So the chat box lists and completes `/wp`.
+[[injection]]
+id = "commands"
+kind = "HEAD"
+hook = "commands"
+hook_version = 1
+helper = "commands.rs"
+bindings = [
+  { name = "commands", ty = "&mut Vec<&'static str>", value = "&mut *commands" },
+]
