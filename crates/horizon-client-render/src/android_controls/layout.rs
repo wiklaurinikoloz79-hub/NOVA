@@ -913,7 +913,7 @@ impl Settings {
         } else {
             32.0
         };
-        self.custom_buttons.truncate(32);
+        self.custom_buttons.truncate(48);
         for button in &mut self.custom_buttons {
             if button.key.is_empty() {
                 button.key = "key.keyboard.unknown".into();
@@ -1041,6 +1041,25 @@ impl Settings {
         if needs_default {
             let def = Self::default_for_style(style);
             let _ = def.save_to(&default_path);
+        }
+        // A bundled GoyControl preset (a PojavLauncher layout, converted), written once.
+        if style == ControlStyle::GoyControl {
+            let bundled = sys_dir.join("lyen144pv2.json");
+            if !bundled.exists()
+                && let Ok(buttons) = serde_json::from_str::<Vec<super::CustomButton>>(include_str!(
+                    "presets/lyen144pv2.json"
+                ))
+            {
+                let mut s = Self::default_goycontrol();
+                s.custom_buttons = buttons;
+                s.control_style = style;
+                s.preset_id = "lyen144pv2".into();
+                s.active_profile = "lyen144pv2".into();
+                s.preset_name = "Lyen144p V2".into();
+                s.preset_description = "Layout imported from a PojavLauncher control file".into();
+                s.sanitize();
+                let _ = s.save_to(&bundled);
+            }
         }
         // Migrate legacy user profiles from `controlmap/` into the matching system directory once.
         let legacy_dir = game_home.join("controlmap");

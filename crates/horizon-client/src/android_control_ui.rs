@@ -7910,7 +7910,7 @@ pub fn touch_hud_editor(
                         }
                         3 => {
                             // + Add Button (supported in BOTH MCPE and GoyControl modes!)
-                            if tc.settings.custom_buttons.len() < 32 {
+                            if tc.settings.custom_buttons.len() < 48 {
                                 push_undo_snapshot(&mut ed, &tc.settings);
                                 let idx = tc.settings.custom_buttons.len();
                                 let is_goy = tc.settings.control_style == ControlStyle::GoyControl;
