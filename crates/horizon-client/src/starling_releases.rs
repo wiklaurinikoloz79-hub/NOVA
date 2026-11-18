@@ -6,10 +6,10 @@
 //! before, and still do until the merged one. Both are asked, the organisation's first, so an
 //! install follows the releases wherever they come out. The organisation's repository also holds
 //! Horizon Android's releases (its APKs are named after it) and preview builds of Starling
-//! (`starling-preview-...`): only an APK named `starling-<version>-...` is an update.
+//! (`starling-preview-...`): only an APK named `nova-<version>-...` is an update.
 
 /// The repositories, as GitHub's API names them, the organisation's first.
-pub const REPOSITORIES: [&str; 2] = ["starling-client/starling", "JuanLuci/starling"];
+pub const REPOSITORIES: [&str; 2] = ["wiklaurinikoloz79-hub/NOVA", "starling-client/starling"];
 
 /// A repository's latest release, as GitHub's API serves it.
 pub fn latest_url(repository: &str) -> String {
@@ -78,7 +78,7 @@ fn update_for_abi(latest: &serde_json::Value, current: &str, abi: &str) -> Optio
         return None;
     }
     let version = tag.trim_start_matches('v');
-    let name = format!("starling-{version}-{abi}.apk");
+    let name = format!("nova-{version}-{abi}.apk");
     let apk = latest["assets"]
         .as_array()?
         .iter()
@@ -234,30 +234,30 @@ mod tests {
     #[test]
     fn updates_select_the_process_abi_even_when_another_apk_is_listed_first() {
         let all = json!({"tag_name":"v0.3.0", "assets":[
-            asset("starling-0.3.0-arm64-v8a.apk"), asset("starling-0.3.0-armeabi-v7a.apk"),
-            asset("starling-0.3.0-x86.apk"), asset("starling-0.3.0-x86_64.apk")
+            asset("nova-0.3.0-arm64-v8a.apk"), asset("nova-0.3.0-armeabi-v7a.apk"),
+            asset("nova-0.3.0-x86.apk"), asset("nova-0.3.0-x86_64.apk")
         ]});
         for abi in ["arm64-v8a", "armeabi-v7a", "x86", "x86_64"] {
             assert_eq!(
                 update_for_abi(&all, "0.2.3", abi).unwrap().name,
-                format!("starling-0.3.0-{abi}.apk")
+                format!("nova-0.3.0-{abi}.apk")
             );
         }
         let release = json!({"tag_name":"v0.3.0", "assets":[
-            asset("starling-0.3.0-arm64-v8a.apk"), asset("starling-0.3.0-armeabi-v7a.apk")
+            asset("nova-0.3.0-arm64-v8a.apk"), asset("nova-0.3.0-armeabi-v7a.apk")
         ]});
         assert_eq!(
             update_for_abi(&release, "0.2.3", "armeabi-v7a")
                 .unwrap()
                 .name,
-            "starling-0.3.0-armeabi-v7a.apk"
+            "nova-0.3.0-armeabi-v7a.apk"
         );
         assert_eq!(
             update_for_abi(&release, "0.2.3", "arm64-v8a").unwrap().name,
-            "starling-0.3.0-arm64-v8a.apk"
+            "nova-0.3.0-arm64-v8a.apk"
         );
         let arm64_only =
-            json!({"tag_name":"v0.3.0", "assets":[asset("starling-0.3.0-arm64-v8a.apk")]});
+            json!({"tag_name":"v0.3.0", "assets":[asset("nova-0.3.0-arm64-v8a.apk")]});
         assert!(update_for_abi(&arm64_only, "0.2.3", "armeabi-v7a").is_none());
     }
 
@@ -326,16 +326,16 @@ mod tests {
             json!({"tag_name": "v0.7.8", "assets": [asset("Horizon-Android-0.7.8-arm64-v8a.apk")]});
         assert_eq!(update_for_abi(&horizon, "0.2.2", "arm64-v8a"), None);
         // A preview build is another app, signed with another key.
-        let preview = json!({"tag_name": "v0.8.0", "assets": [asset("starling-preview-0.8.0-arm64-v8a.apk")]});
+        let preview = json!({"tag_name": "v0.8.0", "assets": [asset("nova-preview-0.8.0-arm64-v8a.apk")]});
         assert_eq!(update_for_abi(&preview, "0.2.2", "arm64-v8a"), None);
         let release = json!({"tag_name": "v0.8.0", "assets": [
-            asset("starling-preview-0.8.0-arm64-v8a.apk"),
+            asset("nova-preview-0.8.0-arm64-v8a.apk"),
             asset("StarlingVisuals.zip"),
-            asset("starling-0.8.0-arm64-v8a.apk"),
+            asset("nova-0.8.0-arm64-v8a.apk"),
         ]});
         let update = update_for_abi(&release, "0.2.2", "arm64-v8a").unwrap();
         assert_eq!(update.version, "0.8.0");
-        assert_eq!(update.name, "starling-0.8.0-arm64-v8a.apk");
+        assert_eq!(update.name, "nova-0.8.0-arm64-v8a.apk");
         assert_eq!(update.sha256.as_deref(), Some("ab"));
         assert_eq!(
             update_for_abi(&release, "0.8.0", "arm64-v8a"),
@@ -348,7 +348,7 @@ mod tests {
     fn the_newest_repository_wins_and_a_tie_keeps_the_first() {
         let update = |version: &str, url: &str| Update {
             version: version.into(),
-            name: format!("starling-{version}-arm64-v8a.apk"),
+            name: format!("nova-{version}-arm64-v8a.apk"),
             url: url.into(),
             size: 1,
             sha256: None,
