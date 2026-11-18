@@ -35,13 +35,13 @@ ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
 
 APPLICATION_ID = "io.github.juanluci.starling"
-LABEL = "Starling"
+LABEL = "Nova"
 # --dev and --preview: an app of its own, installed beside the release (which a build signed with
 # another key cannot install over), with its own folder (StarlingActivity.sharedFolder: StarlingDev,
 # StarlingPreview) and its own sign-in and game files. Preview is what starling-client/starling's
 # CI builds, signed with that repository's test key: the release key stays out of it.
 DEV_SUFFIX = ".dev"
-VARIANTS = {"dev": (DEV_SUFFIX, " Dev"), "preview": (".preview", " Preview")}
+VARIANTS = {"dev": (DEV_SUFFIX, " Dev"), "preview": (".preview", "")}
 VERSION_NAME = "0.8.0"
 VERSION_CODE = 13
 MIN_SDK = 26  # AAudio (cpal)

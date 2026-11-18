@@ -18,7 +18,39 @@
   <a href="https://github.com/ludovic111/horizon"><b>Horizon</b></a>
 </p>
 
-# Starling
+# Nova
+
+**English** · [ქართული](#ქართული)
+
+**Nova is a free, open-source, lightweight port of Minecraft: Java Edition to Android**, made in Georgia 🇬🇪 as a fork of [Starling](https://github.com/starling-client/starling) and [Horizon](https://github.com/ludovic111/horizon). It is written in Rust and runs natively on the phone, with no Java virtual machine in between, so it starts fast and plays smoothly.
+
+- **Your own game files:** Nova contains no Minecraft code or assets. You need your own legally obtained copy of Minecraft: Java Edition.
+- **Waypoints** (`/wp add NAME`, `/wp list`, `/wp remove NAME`): save places and see their direction and distance on the screen, so a long trip never loses them. Available as the `waypoints` native mod in [`native-mods/`](native-mods/waypoints).
+- **Touch controls:** a ready-made GoyControl layout, *Lyen144p V2*, is included (Controls → GoyControl → Presets).
+- **Accounts:** the title screen's account button manages Microsoft, Ely.by and offline profiles.
+- **Mods:** opens Horizon's content mods (`.hmod`) and native mods (`.hnmod`) straight from your file manager; the Mods page can compile native mods with GitHub.
+- **Built-in controller and touch settings, plus Diagnostics** (Options → Diagnostics) for crash reports and performance recordings.
+- **Tested device:** Poco C65 (arm64, Android). Other phones should work but are not tested yet. Install the APK that matches your device (ARM64 for most phones).
+
+> Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Nova is a community fork and keeps the original MIT license and credits to the Starling and Horizon authors.
+
+### ქართული
+
+**Nova არის Minecraft: Java Edition-ის უფასო, ღია კოდის მქონე და მსუბუქი ვერსია Android-ისთვის**, შექმნილი საქართველოში 🇬🇪. ის [Starling-ისა](https://github.com/starling-client/starling) და [Horizon-ის](https://github.com/ludovic111/horizon) ფორკია. დაწერილია Rust-ზე და მუშაობს პირდაპირ ტელეფონზე, Java-ს ვირტუალური მანქანის გარეშე, ამიტომ სწრაფად იწყება და შეუფერხებლად თამაშობს.
+
+- **თქვენი საკუთარი თამაშის ფაილები:** Nova-ში Minecraft-ის კოდი ან რესურსები არ შედის. გჭირდებათ თქვენი საკუთარი, კანონიერად შეძენილი Minecraft: Java Edition.
+- **გზის წერტილები (Waypoints)** (`/wp add სახელი`, `/wp list`, `/wp remove სახელი`): შეინახეთ ადგილები და ეკრანზე ნახეთ მათი მიმართულება და მანძილი, რომ შორს წასვლისას აღარაფერი დაგეკარგოთ. ხელმისაწვდომია როგორც `waypoints` მოდი საქაღალდეში [`native-mods/`](native-mods/waypoints).
+- **სენსორული მართვა:** შედის მზა GoyControl განლაგება *Lyen144p V2* (Controls → GoyControl → Presets).
+- **ანგარიშები:** სათაურის ეკრანზე ღილაკით შეგიძლიათ Microsoft, Ely.by და ოფლაინ პროფილების მართვა.
+- **მოდები:** ხსნის Horizon-ის კონტენტ-მოდებს (`.hmod`) და ნატიური მოდებს (`.hnmod`) პირდაპირ ფაილების მენეჯერიდან; ნატიური მოდების დაკომპილება GitHub-ით შეიძლება Mods გვერდიდან.
+- **კონტროლერისა და სენსორული მართვის პარამეტრები და Diagnostics** (Options → Diagnostics): ავარიების ანგარიშები და წარმადობის ჩანაწერები.
+- **გატესტილი მოწყობილობა:** Poco C65 (arm64, Android). სხვა ტელეფონებზეც უნდა მუშაობდეს, მაგრამ ჯერ არ არის გატესტილი. დააყენეთ თქვენი მოწყობილობის შესაფერისი APK (უმეტეს ტელეფონზე ARM64).
+
+> ეს არ არის Minecraft-ის ოფიციალური პროდუქტი. Mojang-ს და Microsoft-ს მასთან კავშირი არ აქვს და არ დაუმტკიცებიათ. Nova არის საზოგადოების ფორკი და ინარჩუნებს ორიგინალ MIT ლიცენზიას და Starling-ისა და Horizon-ის ავტორების მითითებას.
+
+---
+
+## About Starling (the project Nova is based on)
 
 **Starling, formerly Horizon Android, is a lightweight port of Minecraft: Java Edition 26.3 to Android.** Co-founded by [JuanLuci](https://github.com/JuanLuci), founder of Starling, and [Vasysik](https://github.com/Vasysik), founder of Horizon Android. It is a fork of [Horizon](https://github.com/ludovic111/horizon), the Java game rewritten in Rust: it reads the same worlds, follows the same rules and generates the same terrain as Java Edition, and is checked against it by differential harnesses. You play it on the files from your own copy of Minecraft; it is free, open source and unofficial. And it runs natively, with no Java virtual machine and no OpenGL translation in between, so it starts fast and plays smoothly on a phone.
 
