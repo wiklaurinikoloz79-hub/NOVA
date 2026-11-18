@@ -27,6 +27,10 @@ on:
         description: Build as a release does (release key, fast profile) without publishing, to install over a release; kept a day
         type: boolean
         default: false
+      publish_tag:
+        description: Publish the APKs of this build into the release with this tag (Nova), e.g. nova-1.0
+        type: string
+        default: ''
       native_mods:
         description: A test with these native mods of native-mods/ compiled in (ids, separated by spaces), by native_build.sh
         type: string
@@ -197,7 +201,7 @@ jobs:
   nova-release:
     # A tag nova-* publishes the four APKs as a release of this repository.
     needs: apk
-    if: startsWith(github.ref, 'refs/tags/nova-')
+    if: startsWith(github.ref, 'refs/tags/nova-') || inputs.publish_tag != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -211,6 +215,7 @@ jobs:
       - name: Publish the release
         env:
           GH_TOKEN: ${{ github.token }}
+          PUBLISH_TAG: ${{ inputs.publish_tag }}
         run: |
           mkdir -p out
           for apk in target/android/starling-*.apk; do
@@ -218,7 +223,10 @@ jobs:
             cp "$apk" "out/$name"
           done
           ls -l out
-          gh release create "$GITHUB_REF_NAME" out/nova-*.apk \
-            --title "Nova ${GITHUB_REF_NAME#nova-}" \
-            --notes "Nova ${GITHUB_REF_NAME#nova-}. Download the APK for your phone: nova-*-arm64-v8a.apk fits most phones (ARM64). If an older Nova or Starling Preview is installed with a different signature, uninstall it once first. / ჩამოტვირთეთ თქვენი ტელეფონის შესაფერისი APK: nova-*-arm64-v8a.apk უმეტეს ტელეფონს ერგება. თუ ძველი Nova ან Starling Preview სხვა ხელმოწერით გიდგათ, ერთხელ წაშალეთ." \
-            --latest
+          tag="${PUBLISH_TAG:-$GITHUB_REF_NAME}"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" out/nova-*.apk --clobber
+          else
+            gh release create "$tag" out/nova-*.apk --title "Nova ${tag#nova-}" --latest \
+              --notes "Download the APK for your phone: nova-*-arm64-v8a.apk fits most phones (ARM64). / ჩამოტვირთეთ თქვენი ტელეფონის შესაფერისი APK: nova-*-arm64-v8a.apk უმეტეს ტელეფონს ერგება."
+          fi
