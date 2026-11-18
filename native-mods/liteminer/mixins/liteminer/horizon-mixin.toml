@@ -1,0 +1,62 @@
+[mod]
+id = "liteminer"
+version = "0.1.0"
+
+# A port of Liteminer (https://github.com/iamkaf/liteminer, MIT licence, by
+# iamkaf): break one block and the connected blocks of the same kind go with it.
+# It only uses hook points (destroy_block, hud, command, commands).
+
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "liteminer"
+source = "runtime.rs"
+
+# The break itself: the block the player broke, once the game allowed it.
+[[injection]]
+id = "destroy"
+kind = "HEAD"
+hook = "destroy_block"
+hook_version = 1
+helper = "destroy.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "state", ty = "horizon_world::registry::BlockStateId", value = "state" },
+]
+
+# The HUD: whether vein mining is on, its shape and its limit.
+[[injection]]
+id = "hud"
+kind = "HEAD"
+hook = "hud"
+hook_version = 1
+helper = "hud.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "&mut *batch" },
+  { name = "corners", ty = "&mut horizon_client::extras_hud::Corners", value = "&mut *corners" },
+]
+
+# `/vein`, typed in chat.
+[[injection]]
+id = "command"
+kind = "HEAD"
+hook = "command"
+hook_version = 1
+helper = "command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "&mut *ran" },
+]
+
+[[injection]]
+id = "commands"
+kind = "HEAD"
+hook = "commands"
+hook_version = 1
+helper = "commands.rs"
+bindings = [
+  { name = "commands", ty = "&mut Vec<&'static str>", value = "&mut *commands" },
+]
