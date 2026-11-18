@@ -292,7 +292,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         #[cfg(target_os = "android")]
         Step::Horizon(false) => (
             "Coming from Horizon Android?",
-            "Horizon Android is part of Starling now: bring your worlds and resource packs over. \
+            "Horizon Android is part of Nova now: bring your worlds and resource packs over. \
              Close Horizon Android first, then, in the folder that opens, tap Use this folder and \
              Allow."
                 .into(),
@@ -306,7 +306,7 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
                 .into(),
             None,
         ),
-        Step::Start => ("Set up Starling", tr("setup.intro"), None),
+        Step::Start => ("Set up Nova", tr("setup.intro"), None),
         Step::Offline => (
             "Are you sure?",
             "You will not be able to play on most servers! We highly recommend signing in with \
@@ -314,8 +314,8 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
                 .into(),
             None,
         ),
-        Step::Talking(message) => ("Set up Starling", message.clone(), None),
-        Step::AccountForm => ("Set up Starling", String::new(), None),
+        Step::Talking(message) => ("Set up Nova", message.clone(), None),
+        Step::AccountForm => ("Set up Nova", String::new(), None),
         Step::Code { link, .. } => (
             "Sign in with Microsoft",
             format!("On {link}, enter this code:"),
@@ -342,11 +342,11 @@ fn texts(step: &Step) -> (&'static str, String, Option<String>) {
         Step::Unpacking => ("Preparing the game", "Unpacking Java.".into(), None),
         Step::Preparing(line) => (
             "Preparing the game",
-            "This takes a few minutes. Keep Starling open.".into(),
+            "This takes a few minutes. Keep Nova open.".into(),
             Some(line.clone()),
         ),
         Step::Done => (
-            "Starting Starling",
+            "Starting Nova",
             "The game files are ready.".into(),
             None,
         ),

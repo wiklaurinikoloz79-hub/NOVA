@@ -104,7 +104,7 @@ fn run(resources: &Path) -> Result<(), String> {
         .ok_or("No Java runtime is available for this architecture.")?;
     let server_jar = crate::accounts::server_jar()
         .ok_or("The game files are not all there: download them again.")?;
-    let library = crate::platform::library_dir().ok_or("Starling cannot find its own files.")?;
+    let library = crate::platform::library_dir().ok_or("Nova cannot find its own files.")?;
     let home = home();
     let kit = home.join("kit");
     unpack_kit(&kit)?;
@@ -292,7 +292,7 @@ pub fn put_shader_pack(game_folder: &Path) {
     {
         Ok(()) => log::info!("Horizon: Starling Visuals put in {}", dir.display()),
         Err(e) => log::warn!(
-            "Horizon: Starling Visuals could not be put in {}: {e}",
+            "Horizon: Nova Visuals could not be put in {}: {e}",
             dir.display()
         ),
     }
@@ -317,7 +317,7 @@ fn crc32(bytes: &[u8]) -> u32 {
 /// The kit the app carries, over `dir` (its sources replaced, horizon-prepare's work kept).
 fn unpack_kit(dir: &Path) -> Result<(), String> {
     let bytes = crate::platform::asset("prepare-kit.zip")
-        .ok_or("Starling's preparer is missing from the app: install it again.")?;
+        .ok_or("Nova's preparer is missing from the app: install it again.")?;
     install::reset_kit_sources(dir)?;
     unpack(&bytes, dir)
 }

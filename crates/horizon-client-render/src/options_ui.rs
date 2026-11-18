@@ -8091,8 +8091,8 @@ mod tests {
         let mut s = Settings::default();
         let mut ui = OptionsUi::default();
         let size = (480.0, 400.0);
-        let now = "Now: Starling 0.8.0 from the APK, without native mods.";
-        let old = "The build with Wrench was made for an earlier install of Starling, so it no \
+        let now = "Now: Nova 0.8.0 from the APK, without native mods.";
+        let old = "The build with Wrench was made for an earlier install of Nova, so it no \
                    longer loads. Compile again.";
         s.mods.native_game = Some(NativeGame {
             lines: vec![(now.into(), false), (old.into(), true)],

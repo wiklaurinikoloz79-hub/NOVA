@@ -371,7 +371,7 @@ fn download(build: &Build, version: &str, shared: &Mutex<Shared>) -> Result<Stri
         ));
     }
     if about["version"].as_str() != Some(version) {
-        return Err(format!("That build is not for Starling {version}."));
+        return Err(format!("That build is not for Nova {version}."));
     }
     let want = about["sha256"].as_str().unwrap_or_default().to_owned();
     if want.len() != 64 {
@@ -1057,7 +1057,7 @@ impl Game<'_> {
                     "Native mods".to_owned(),
                     format!(
                         "{playing}{found} Native mods run with the game's full access. To add \
-                         one, open its .hnmod with Starling and press Compile on its row."
+                         one, open its .hnmod with Nova and press Compile on its row."
                     ),
                 )
             }
@@ -1072,7 +1072,7 @@ impl Game<'_> {
             Stage::Chosen(name) => {
                 acts.push(("Restart now".into(), Act::Restart));
                 danger = came_from(name).map(|host| {
-                    format!("This build came from {host}, not from Starling's server.")
+                    format!("This build came from {host}, not from Nova's server.")
                 });
                 (
                     if name.starts_with(COMPILED) {
@@ -1080,7 +1080,7 @@ impl Game<'_> {
                     } else {
                         format!("{} is ready", label(name))
                     },
-                    "It plays from the next start. If it closes before it shows, Starling starts \
+                    "It plays from the next start. If it closes before it shows, Nova starts \
                      without it the time after."
                         .into(),
                 )
@@ -1111,7 +1111,7 @@ impl Game<'_> {
                 acts.push(("Build server...".into(), Act::Server));
                 danger = custom_host.map(|host| {
                     format!(
-                        "{host} is not Starling's server. The game it sends back runs with full \
+                        "{host} is not Nova's server. The game it sends back runs with full \
                          access, including your worlds and your signed-in account. We take no \
                          responsibility for it."
                     )
@@ -1123,7 +1123,7 @@ impl Game<'_> {
                     ""
                 };
                 let server = custom_host.map_or_else(
-                    || "Starling's build server".to_owned(),
+                    || "Nova's build server".to_owned(),
                     |host| format!("the build server at {host}"),
                 );
                 (

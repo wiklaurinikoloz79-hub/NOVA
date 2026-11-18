@@ -195,7 +195,7 @@ impl Game<'_> {
                     Ok(release) => {
                         if let Some(r) = &release {
                             log::info!(
-                                "Horizon: Starling {} is out (this is {current})",
+                                "Horizon: Nova {} is out (this is {current})",
                                 r.version
                             );
                         }
@@ -263,23 +263,23 @@ impl Game<'_> {
         let version = &release.version;
         let (title, body, buttons): (String, String, &[&str]) = match &stage {
             Stage::Ask => (
-                format!("Starling {version} is out"),
+                format!("Nova {version} is out"),
                 format!(
-                    "Update now? Starling downloads it ({} MB) and Android installs it over this \
+                    "Update now? Nova downloads it ({} MB) and Android installs it over this \
                      one: your worlds and settings stay.",
                     mb(release.size)
                 ),
                 &["Update", "Tomorrow", "No"],
             ),
             Stage::Downloading => (
-                format!("Downloading Starling {version}"),
+                format!("Downloading Nova {version}"),
                 format!("{} of {} MB", mb(done), mb(total)),
                 &["Cancel"],
             ),
             Stage::Installing => (
-                format!("Install Starling {version}"),
+                format!("Install Nova {version}"),
                 "Android asks to install the update (the first time, to allow installs from \
-                 Starling). Once it is in, open Starling again."
+                 Nova). Once it is in, open Nova again."
                     .into(),
                 &["Install", "Later"],
             ),

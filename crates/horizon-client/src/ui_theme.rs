@@ -684,7 +684,7 @@ mod tests {
         let atlas = HudAtlas::boot();
         let mut first = HudBatch::new([1280, 720]);
         let mut ui = Ui::new(&atlas, &mut first, (-1., -1.));
-        ui.text(Face::Regular, 16., 10., 10., color::TEXT, "Starling");
+        ui.text(Face::Regular, 16., 10., 10., color::TEXT, "Nova");
         ui.finish();
         let before = first.patches.clone();
         let mut second = HudBatch::new([1280, 720]);
@@ -719,7 +719,7 @@ mod tests {
         }
         let mut third = HudBatch::new([1280, 720]);
         let mut ui = Ui::new(&atlas, &mut third, (-1., -1.));
-        ui.text(Face::Regular, 16., 10., 10., color::TEXT, "Starling");
+        ui.text(Face::Regular, 16., 10., 10., color::TEXT, "Nova");
         ui.finish();
         assert!(third.patches.is_empty());
     }
