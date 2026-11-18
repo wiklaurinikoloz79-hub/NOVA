@@ -3,5 +3,7 @@
   "id": "waypoints",
   "mixins": "0d6b103c70633d8fd9443d8d0acd3aadaacedb06",
   "schema": 1,
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "horizon": "a2258be0b2990d0c645a61c8a5e8c79a61b9c1c5",
+  "hooks": 359
 }
