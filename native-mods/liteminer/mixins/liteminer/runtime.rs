@@ -61,7 +61,7 @@ static STATE: Mutex<State> = Mutex::new(State {
 /// Set while this mod breaks the neighbours, so its own breaks are not veins.
 static BUSY: AtomicBool = AtomicBool::new(false);
 
-fn state() -> MutexGuard<'static, State> {
+fn vein_state() -> MutexGuard<'static, State> {
     STATE.lock().unwrap_or_else(|e| e.into_inner())
 }
 
@@ -183,7 +183,7 @@ impl Game<'_> {
             return;
         }
         let (on, shape, limit, deepslate) = {
-            let s = state();
+            let s = vein_state();
             (s.on, s.shape, s.limit, s.deepslate)
         };
         if !on {
@@ -214,7 +214,7 @@ impl Game<'_> {
         }
         BUSY.store(false, Ordering::Relaxed);
         if taken > 0 {
-            let mut s = state();
+            let mut s = vein_state();
             s.answer = Some((format!("Vein: +{taken} blocks"), Instant::now() + ANSWER));
         }
     }
@@ -227,7 +227,7 @@ impl Game<'_> {
         }
         let sub = words.next().unwrap_or("").to_ascii_lowercase();
         let arg = words.next().unwrap_or("").to_ascii_lowercase();
-        let mut s = state();
+        let mut s = vein_state();
         let text = match sub.as_str() {
             "" | "toggle" => {
                 s.on = !s.on;
@@ -279,7 +279,7 @@ impl Game<'_> {
         }
         let mut lines: Vec<(String, u32)> = Vec::new();
         {
-            let mut s = state();
+            let mut s = vein_state();
             if s.answer.as_ref().is_some_and(|(_, t)| Instant::now() >= *t) {
                 s.answer = None;
             }
