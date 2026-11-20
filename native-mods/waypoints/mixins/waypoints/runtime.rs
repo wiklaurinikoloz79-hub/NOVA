@@ -12,7 +12,9 @@
 // has none, shares one list). The HUD shows the nearest few of the current
 // dimension: `NAME ^> 312m` is a place ahead and to the right, 312 blocks off.
 use super::Game;
-use horizon_client::{extras::Corner, extras_hud::Corners, hud::HudBatch};
+use horizon_client::{
+    extras::Corner, extras_hud::Corners, hud::HudBatch, mod_api::NativeBlockRim,
+};
 use std::{
     path::PathBuf,
     sync::{Mutex, MutexGuard},
@@ -35,6 +37,12 @@ const ARROWS: [&str; 8] = ["^", "^>", ">", "v>", "v", "<v", "<", "<^"];
 const BOX: u32 = 0x7800_0000;
 const NAME_COLOR: u32 = 0x00FF_FFFF;
 const ANSWER_COLOR: u32 = 0x00FF_FFAA;
+const SELECTED_COLOR: u32 = 0x00FF_D755;
+/// The outline of a place in the world (ARGB), and of the selected one.
+const RIM_COLOR: u32 = 0xFFFF_FFFF;
+const RIM_SELECTED: u32 = 0xFFFF_D755;
+/// Places farther than this get no outline (they are not drawn anyway).
+const RIM_RANGE: f64 = 160.0;
 
 struct Entry {
     world: String,
@@ -48,6 +56,8 @@ struct State {
     loaded: bool,
     answer: Vec<String>,
     until: Option<Instant>,
+    /// The place the buttons act on (its name), chosen with the select button.
+    selected: Option<String>,
 }
 
 static STATE: Mutex<State> = Mutex::new(State {
@@ -55,6 +65,7 @@ static STATE: Mutex<State> = Mutex::new(State {
     loaded: false,
     answer: Vec::new(),
     until: None,
+    selected: None,
 });
 
 fn state() -> MutexGuard<'static, State> {
@@ -270,8 +281,13 @@ impl Game<'_> {
                 })
                 .collect();
             near.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+            let chosen = s.selected.clone();
             for (_, text) in near.into_iter().take(SHOWN) {
-                lines.push((text, NAME_COLOR));
+                let color = match &chosen {
+                    Some(n) if text.starts_with(&format!("{n} ")) => SELECTED_COLOR,
+                    _ => NAME_COLOR,
+                };
+                lines.push((text, color));
             }
         }
         if lines.is_empty() {
@@ -290,10 +306,143 @@ impl Game<'_> {
         }
     }
 
-    /// `native_key`: `key.keyboard.k` (a touch button's key) while playing.
+    /// The places of this world and dimension, nearest first.
+    fn waypoints_here(&self, s: &State) -> Vec<usize> {
+        let (Some(cam), world) = (self.native_camera(), self.waypoints_world()) else {
+            return Vec::new();
+        };
+        let mut at: Vec<(f64, usize)> = s
+            .entries
+            .iter()
+            .enumerate()
+            .filter(|(_, e)| e.world == world && e.dim == cam.dimension)
+            .map(|(i, e)| {
+                let dx = f64::from(e.pos[0]) + 0.5 - cam.position[0];
+                let dy = f64::from(e.pos[1]) - cam.position[1];
+                let dz = f64::from(e.pos[2]) + 0.5 - cam.position[2];
+                (dx * dx + dy * dy + dz * dz, i)
+            })
+            .collect();
+        at.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal));
+        at.into_iter().map(|(_, i)| i).collect()
+    }
+
+    /// `native_key`, for the touch buttons while playing:
+    /// K saves a place here ("Spot 1", "Spot 2"...), L selects the next place
+    /// (nearest first), U forgets the selected one.
     pub(super) fn waypoints_key(&mut self, key: &str, pressed: bool) {
-        if pressed && key == "key.keyboard.k" && self.native_playing() {
-            self.waypoints_command("wp list");
+        if !pressed || !self.native_playing() {
+            return;
+        }
+        match key {
+            "key.keyboard.k" => {
+                let world = self.waypoints_world();
+                let n = {
+                    let s = state();
+                    (1..)
+                        .find(|n| {
+                            let name = format!("Spot {n}");
+                            !s.entries
+                                .iter()
+                                .any(|e| e.world == world && e.name.eq_ignore_ascii_case(&name))
+                        })
+                        .unwrap_or(1)
+                };
+                let name = format!("Spot {n}");
+                self.waypoints_command(&format!("wp add {name}"));
+                state().selected = Some(name);
+            }
+            "key.keyboard.l" => {
+                let mut s = state();
+                let here = self.waypoints_here(&s);
+                if here.is_empty() {
+                    s.selected = None;
+                    s.answer = vec!["No saved places".to_string()];
+                    s.until = Some(Instant::now() + ANSWER);
+                    return;
+                }
+                let current = s
+                    .selected
+                    .as_ref()
+                    .and_then(|n| here.iter().position(|&i| s.entries[i].name == *n));
+                let next = here[current.map_or(0, |c| (c + 1) % here.len())];
+                let name = s.entries[next].name.clone();
+                s.answer = vec![format!("Selected {name}")];
+                s.until = Some(Instant::now() + ANSWER);
+                s.selected = Some(name);
+            }
+            "key.keyboard.u" => {
+                let name = state().selected.clone();
+                match name {
+                    Some(name) => {
+                        self.waypoints_command(&format!("wp remove {name}"));
+                        state().selected = None;
+                    }
+                    None => {
+                        let mut s = state();
+                        s.answer = vec!["Select a place first (L)".to_string()];
+                        s.until = Some(Instant::now() + ANSWER);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    /// `native_visuals`: an outline round the block of each saved place of this
+    /// dimension within `RIM_RANGE`, the selected one in gold.
+    pub(super) fn waypoints_rims(&self, rims: &mut Vec<NativeBlockRim>) {
+        let Some(cam) = self.native_camera() else {
+            return;
+        };
+        let s = state();
+        for i in self.waypoints_here(&s) {
+            let e = &s.entries[i];
+            let dx = f64::from(e.pos[0]) + 0.5 - cam.position[0];
+            let dy = f64::from(e.pos[1]) - cam.position[1];
+            let dz = f64::from(e.pos[2]) + 0.5 - cam.position[2];
+            if (dx * dx + dy * dy + dz * dz).sqrt() > RIM_RANGE {
+                continue;
+            }
+            let chosen = s.selected.as_deref() == Some(e.name.as_str());
+            rims.push(NativeBlockRim {
+                pos: e.pos,
+                argb: if chosen { RIM_SELECTED } else { RIM_COLOR },
+                width: if chosen { 3.0 } else { 2.0 },
+            });
+        }
+    }
+
+    /// The labels of the page in Options > Mods: save here, one button per
+    /// place of this world (nearest first, `>` marks the selected one), and
+    /// forget the selected place.
+    pub(super) fn waypoints_settings(&self) -> Vec<String> {
+        let s = state();
+        let mut out = vec!["Save here".to_string()];
+        for i in self.waypoints_here(&s) {
+            let e = &s.entries[i];
+            let mark = if s.selected.as_deref() == Some(e.name.as_str()) { "> " } else { "" };
+            out.push(format!("{mark}{}  ({}, {}, {})", e.name, e.pos[0], e.pos[1], e.pos[2]));
+        }
+        out.push("Delete selected".to_string());
+        out
+    }
+
+    /// A click on one of those buttons.
+    pub(super) fn waypoints_settings_click(&mut self, button: usize) {
+        if button == 0 {
+            self.waypoints_key("key.keyboard.k", true);
+            return;
+        }
+        let place = {
+            let s = state();
+            let here = self.waypoints_here(&s);
+            here.get(button - 1).map(|&i| s.entries[i].name.clone())
+        };
+        match place {
+            Some(name) => state().selected = Some(name),
+            None => self.waypoints_key("key.keyboard.u", true),
         }
     }
 }
+
