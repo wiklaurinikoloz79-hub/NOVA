@@ -170,7 +170,7 @@ impl Game<'_> {
                 (false, Some(cam)) => {
                     let pos = [
                         cam.position[0].floor() as i32,
-                        cam.position[1].floor() as i32,
+                        (cam.position[1] - f64::from(cam.eye_height)).floor() as i32,
                         cam.position[2].floor() as i32,
                     ];
                     let entry = Entry {
@@ -339,14 +339,15 @@ impl Game<'_> {
                 let world = self.waypoints_world();
                 let n = {
                     let s = state();
-                    (1..)
-                        .find(|n| {
-                            let name = format!("Spot {n}");
-                            !s.entries
-                                .iter()
-                                .any(|e| e.world == world && e.name.eq_ignore_ascii_case(&name))
-                        })
-                        .unwrap_or(1)
+                    let mut n = 1;
+                    while s
+                        .entries
+                        .iter()
+                        .any(|e| e.world == world && e.name.eq_ignore_ascii_case(&format!("Spot {n}")))
+                    {
+                        n += 1;
+                    }
+                    n
                 };
                 let name = format!("Spot {n}");
                 self.waypoints_command(&format!("wp add {name}"));
