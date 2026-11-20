@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " B ",
+    "BPB",
+    " B "
+  ],
+  "key": {
+    "B": "minecraft:diamond_block",
+    "P": "minecraft:netherite_shovel"
+  },
+  "result": {
+    "id": "hammers:excavator_shovel",
+    "count": 1
+  }
+}

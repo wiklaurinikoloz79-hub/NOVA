@@ -1,0 +1,28 @@
+[mod]
+id = "hammers"
+version = "0.1.0"
+
+[compatibility]
+horizon_revision = "a2258be0b2990d0c645a61c8a5e8c79a61b9c1c5"
+
+# Behaviour of the Excavator tools of the `hammers` content mod (hammers.hmod):
+# breaking a block with one also breaks the 3x3 wall round it, the blocks the
+# tool is made for. Only hook point used: destroy_block.
+
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "hammers"
+source = "runtime.rs"
+
+[[injection]]
+id = "destroy"
+kind = "HEAD"
+hook = "destroy_block"
+hook_version = 1
+helper = "destroy.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "state", ty = "horizon_world::registry::BlockStateId", value = "state" },
+]

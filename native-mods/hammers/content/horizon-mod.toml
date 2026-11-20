@@ -1,0 +1,8 @@
+id = "hammers"
+name = "Hammers"
+version = "0.1.0"
+description = "Excavator pickaxe, shovel and axe that break a 3x3 area (needs the hammers native mod)."
+authors = ["Nova"]
+api = "0.2"
+side = "both"
+capabilities = ["registries"]
