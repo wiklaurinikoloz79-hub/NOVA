@@ -63,3 +63,16 @@ helper = "commands.rs"
 bindings = [
   { name = "commands", ty = "&mut Vec<&'static str>", value = "&mut *commands" },
 ]
+
+# A key (or a touch button bound to it).
+[[injection]]
+id = "key"
+kind = "HEAD"
+hook = "key"
+hook_version = 1
+helper = "key.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "key", ty = "&str", value = "key" },
+  { name = "pressed", ty = "bool", value = "pressed" },
+]

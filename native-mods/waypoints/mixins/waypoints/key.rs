@@ -1,0 +1,4 @@
+// native_hooks::Game::native_key (a hook point): a key, for the touch button.
+fn waypoints_key(game: &mut crate::game::Game<'_>, key: &str, pressed: bool) {
+    game.waypoints_key(key, pressed);
+}

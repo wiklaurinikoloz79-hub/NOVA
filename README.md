@@ -11,7 +11,7 @@
 - **Native and fast:** Rust and Vulkan, no Java virtual machine and no OpenGL translation.
 - **Your own game files:** Nova contains no Minecraft code or assets. You need your own legally obtained copy of Minecraft: Java Edition.
 - **Waypoints:** `/wp add NAME`, `/wp list`, `/wp remove NAME`. Save places and see their direction and distance on the screen, so a long trip never loses them (the `waypoints` native mod in [`native-mods/`](native-mods/waypoints)).
-- **Touch controls:** a ready-made layout, *Lyen144p V2*, is included (Controls → GoyControl → Presets). Up to 48 custom buttons per layout.
+- **Touch controls:** a ready-made layout, *Lyen144p V3*, is included (Controls → GoyControl → Presets). Up to 48 custom buttons per layout.
 - **Accounts:** Microsoft, Ely.by and offline profiles, managed from the title screen.
 - **Mods:** open `.hmod` content mods and `.hnmod` native mods straight from your file manager; the Mods page can compile native mods with GitHub.
 - **Controllers and Diagnostics:** controller settings, plus crash reports and performance recordings under Options → Diagnostics.
@@ -60,7 +60,7 @@ MIT, see [LICENSE](LICENSE).
 - **სწრაფი და ნატიური:** Rust და Vulkan, Java-ს ვირტუალური მანქანისა და OpenGL-ის გადამყვანის გარეშე.
 - **თქვენი საკუთარი თამაშის ფაილები:** Nova-ში Minecraft-ის კოდი ან რესურსები არ შედის. გჭირდებათ თქვენი საკუთარი, კანონიერად შეძენილი Minecraft: Java Edition.
 - **გზის წერტილები (Waypoints):** `/wp add სახელი`, `/wp list`, `/wp remove სახელი`. შეინახეთ ადგილები და ეკრანზე ნახეთ მათი მიმართულება და მანძილი, რომ შორს წასვლისას აღარაფერი დაგეკარგოთ (`waypoints` მოდი საქაღალდეში [`native-mods/`](native-mods/waypoints)).
-- **სენსორული მართვა:** შედის მზა განლაგება *Lyen144p V2* (Controls → GoyControl → Presets). ერთ განლაგებაში 48 ღილაკამდე.
+- **სენსორული მართვა:** შედის მზა განლაგება *Lyen144p V3* (Controls → GoyControl → Presets). ერთ განლაგებაში 48 ღილაკამდე.
 - **ანგარიშები:** Microsoft, Ely.by და ოფლაინ პროფილები, მართვა სათაურის ეკრანიდან.
 - **მოდები:** გახსენით `.hmod` და `.hnmod` ფაილები პირდაპირ ფაილების მენეჯერიდან; ნატიური მოდების დაკომპილება GitHub-ით შეიძლება Mods გვერდიდან.
 - **კონტროლერი და Diagnostics:** კონტროლერის პარამეტრები, ავარიების ანგარიშები და წარმადობის ჩანაწერები (Options → Diagnostics).

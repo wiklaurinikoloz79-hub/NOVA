@@ -1044,18 +1044,18 @@ impl Settings {
         }
         // A bundled GoyControl preset (a PojavLauncher layout, converted), written once.
         if style == ControlStyle::GoyControl {
-            let bundled = sys_dir.join("lyen144pv2.json");
+            let bundled = sys_dir.join("lyen144pv3.json");
             if !bundled.exists()
                 && let Ok(buttons) = serde_json::from_str::<Vec<super::CustomButton>>(include_str!(
-                    "presets/lyen144pv2.json"
+                    "presets/lyen144pv3.json"
                 ))
             {
                 let mut s = Self::default_goycontrol();
                 s.custom_buttons = buttons;
                 s.control_style = style;
-                s.preset_id = "lyen144pv2".into();
-                s.active_profile = "lyen144pv2".into();
-                s.preset_name = "Lyen144p V2".into();
+                s.preset_id = "lyen144pv3".into();
+                s.active_profile = "lyen144pv3".into();
+                s.preset_name = "Lyen144p V3".into();
                 s.preset_description = "Layout imported from a PojavLauncher control file".into();
                 s.sanitize();
                 let _ = s.save_to(&bundled);

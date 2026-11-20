@@ -2923,5 +2923,155 @@
     "visible_in_menu": true
    }
   ]
+ },
+ {
+  "key": "key.keyboard.v",
+  "second_key": "",
+  "third_key": "",
+  "custom_label": "VEIN",
+  "always_visible": true,
+  "layouts": [
+   {
+    "center": [
+     0.45,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   },
+   {
+    "center": [
+     0.45,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   },
+   {
+    "center": [
+     0.45,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   }
+  ]
+ },
+ {
+  "key": "key.keyboard.k",
+  "second_key": "",
+  "third_key": "",
+  "custom_label": "WP",
+  "always_visible": true,
+  "layouts": [
+   {
+    "center": [
+     0.51,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   },
+   {
+    "center": [
+     0.51,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   },
+   {
+    "center": [
+     0.51,
+     0.03
+    ],
+    "size": 0.071,
+    "opacity": 0.82,
+    "passthrough": false,
+    "toggleable": false,
+    "swipeable": false,
+    "shape": 0,
+    "width_ratio": 2.978,
+    "height_ratio": 1.0,
+    "use_goy_style": true,
+    "stroke_size": 1.8,
+    "stroke_margin": 0.0,
+    "roundness": 12.0,
+    "stroke_roundness": 12.0,
+    "shadow_size": 0.0,
+    "visible_in_game": true,
+    "visible_in_menu": true
+   }
+  ]
  }
 ]

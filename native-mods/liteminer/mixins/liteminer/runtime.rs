@@ -309,4 +309,11 @@ impl Game<'_> {
             self.native_text(batch, text, [x + 3.0, y + 2.0 + i as f32 * 10.0], rgb, true);
         }
     }
+
+    /// `native_key`: `key.keyboard.v` (a touch button's key) while playing.
+    pub(super) fn liteminer_key(&mut self, key: &str, pressed: bool) {
+        if pressed && key == "key.keyboard.v" && self.native_playing() {
+            self.liteminer_command("vein");
+        }
+    }
 }
