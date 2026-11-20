@@ -76,3 +76,27 @@ bindings = [
   { name = "key", ty = "&str", value = "key" },
   { name = "pressed", ty = "bool", value = "pressed" },
 ]
+
+# The block aimed at (to preview the vein).
+[[injection]]
+id = "highlight"
+kind = "HEAD"
+hook = "block_highlight"
+hook_version = 1
+helper = "highlight.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+]
+
+# An outline round every block the break would take.
+[[injection]]
+id = "visuals"
+kind = "HEAD"
+hook = "visuals"
+hook_version = 1
+helper = "visuals.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "&*self" },
+  { name = "rims", ty = "&mut Vec<horizon_client::mod_api::NativeBlockRim>", value = "&mut *rims" },
+]

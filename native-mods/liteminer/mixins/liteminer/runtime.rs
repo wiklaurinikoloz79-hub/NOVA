@@ -11,7 +11,9 @@
 //
 // The state is shared by everyone on the world (a phone plays alone).
 use super::Game;
-use horizon_client::{extras::Corner, extras_hud::Corners, hud::HudBatch};
+use horizon_client::{
+    extras::Corner, extras_hud::Corners, hud::HudBatch, mod_api::NativeBlockRim,
+};
 use horizon_world::registry::BlockStateId;
 use std::{
     sync::{
@@ -26,6 +28,12 @@ const ANSWER: Duration = Duration::from_secs(6);
 const BOX: u32 = 0x7800_0000;
 const ON_COLOR: u32 = 0x0055_FF55;
 const ANSWER_COLOR: u32 = 0x00FF_FFAA;
+/// The outline of the blocks a break would take (ARGB).
+const RIM_COLOR: u32 = 0xFF55_FF55;
+/// An aim older than this is stale (the player looks away or the frame skipped it).
+const AIM_FRESH: Duration = Duration::from_millis(400);
+/// How long a computed vein is reused for the same aim.
+const PREVIEW_KEEP: Duration = Duration::from_millis(500);
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Shape {
@@ -57,6 +65,21 @@ static STATE: Mutex<State> = Mutex::new(State {
     deepslate: true,
     answer: None,
 });
+
+/// The block aimed at and the vein found for it.
+struct Aim {
+    pos: [i32; 3],
+    seen: Instant,
+    vein: Vec<[i32; 3]>,
+    made: Instant,
+    valid: bool,
+}
+
+static AIM: Mutex<Option<Aim>> = Mutex::new(None);
+
+fn aim_state() -> MutexGuard<'static, Option<Aim>> {
+    AIM.lock().unwrap_or_else(|e| e.into_inner())
+}
 
 /// Set while this mod breaks the neighbours, so its own breaks are not veins.
 static BUSY: AtomicBool = AtomicBool::new(false);
@@ -278,6 +301,7 @@ impl Game<'_> {
             return;
         }
         let mut lines: Vec<(String, u32)> = Vec::new();
+        let on;
         {
             let mut s = vein_state();
             if s.answer.as_ref().is_some_and(|(_, t)| Instant::now() >= *t) {
@@ -291,6 +315,13 @@ impl Game<'_> {
                     format!("Vein mining: {} (max {})", s.shape.name(), s.limit),
                     ON_COLOR,
                 ));
+            }
+            on = s.on;
+        }
+        if on {
+            let n = self.liteminer_preview().len();
+            if n > 0 {
+                lines.push((format!("Will break: {} blocks", n + 1), ON_COLOR));
             }
         }
         if lines.is_empty() {
@@ -307,6 +338,64 @@ impl Game<'_> {
         for (i, (text, rgb)) in lines.iter().enumerate() {
             let rgb = if *rgb == ON_COLOR { ON_COLOR } else { *rgb };
             self.native_text(batch, text, [x + 3.0, y + 2.0 + i as f32 * 10.0], rgb, true);
+        }
+    }
+
+    /// `native_block_highlight`: the block now aimed at.
+    pub(super) fn liteminer_aim(&self, pos: [i32; 3]) {
+        if !vein_state().on {
+            return;
+        }
+        let mut aim = aim_state();
+        match aim.as_mut() {
+            Some(a) if a.pos == pos => a.seen = Instant::now(),
+            _ => {
+                *aim = Some(Aim {
+                    pos,
+                    seen: Instant::now(),
+                    vein: Vec::new(),
+                    made: Instant::now().checked_sub(PREVIEW_KEEP).unwrap_or_else(Instant::now),
+                    valid: false,
+                })
+            }
+        }
+    }
+
+    /// The blocks the aimed block would take, reused for half a second.
+    fn liteminer_preview(&self) -> Vec<[i32; 3]> {
+        let (on, shape, limit, deepslate) = {
+            let s = vein_state();
+            (s.on, s.shape, s.limit, s.deepslate)
+        };
+        let mut aim = aim_state();
+        let Some(a) = aim.as_mut() else {
+            return Vec::new();
+        };
+        if !on || a.seen.elapsed() > AIM_FRESH {
+            return Vec::new();
+        }
+        if !a.valid || a.made.elapsed() > PREVIEW_KEEP {
+            let id = self.world.block(a.pos[0], a.pos[1], a.pos[2]);
+            let name = self.res.facts().get(id).name.to_string();
+            a.vein = if name == "minecraft:air" || name.ends_with("_air") {
+                Vec::new()
+            } else {
+                self.liteminer_vein(a.pos, &name, shape, limit, deepslate)
+            };
+            a.made = Instant::now();
+            a.valid = true;
+        }
+        a.vein.clone()
+    }
+
+    /// `native_visuals`: an outline round each block a break would take.
+    pub(super) fn liteminer_rims(&self, rims: &mut Vec<NativeBlockRim>) {
+        for pos in self.liteminer_preview() {
+            rims.push(NativeBlockRim {
+                pos,
+                argb: RIM_COLOR,
+                width: 2.0,
+            });
         }
     }
 
