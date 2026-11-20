@@ -2,6 +2,9 @@
 id = "liteminer"
 version = "0.1.0"
 
+[compatibility]
+horizon_revision = "a2258be0b2990d0c645a61c8a5e8c79a61b9c1c5"
+
 # A port of Liteminer (https://github.com/iamkaf/liteminer, MIT licence, by
 # iamkaf): break one block and the connected blocks of the same kind go with it.
 # It only uses hook points (destroy_block, hud, command, commands).

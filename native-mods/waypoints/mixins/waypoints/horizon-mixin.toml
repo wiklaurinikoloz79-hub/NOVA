@@ -2,6 +2,9 @@
 id = "waypoints"
 version = "0.1.0"
 
+[compatibility]
+horizon_revision = "a2258be0b2990d0c645a61c8a5e8c79a61b9c1c5"
+
 # No pin: Starling's mod build sets the commit it builds on. The mod only uses
 # hook points (hud, command, commands) and the game's native_* helpers.
 
