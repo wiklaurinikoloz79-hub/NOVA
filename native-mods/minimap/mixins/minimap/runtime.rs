@@ -9,7 +9,7 @@
 /// The mod's id (its settings folder), name and version.
 pub const ID: &str = "minimap";
 pub const NAME: &str = "Minimap";
-pub const VERSION: &str = "2.0.0";
+pub const VERSION: &str = "2.1.0";
 pub const DESCRIPTION: &str = "A map of the terrain around you in a corner, in map colours, square or round, north up or turning with you. Horizon's own.";
 /// The corners, as the settings files name them and the page labels them.
 pub const CORNERS: [(&str, &str); 4] = [
@@ -152,6 +152,64 @@ pub fn settings(get: impl Fn(&str) -> Option<String>) -> Settings {
 /// Replaces the settings (the settings page changed them).
 pub fn set_settings(settings: Settings) {
     SETTINGS.with(|s| s.set(Some(settings)));
+}
+
+/// The marked base (Nova): where it sits on the map, in GUI pixels from the
+/// map's centre, and how far away it is in blocks. Set each frame by the
+/// minimap view, drawn after the map.
+pub static BASE_DOT: std::sync::Mutex<Option<(f32, f32, f32)>> = std::sync::Mutex::new(None);
+
+/// A stored base: `world|dimension|x|y|z`.
+pub fn parse_base(text: &str) -> Option<(String, String, [f64; 3])> {
+    let mut p = text.trim().splitn(5, '|');
+    let world = p.next()?.to_string();
+    let dim = p.next()?.to_string();
+    let x: f64 = p.next()?.parse().ok()?;
+    let y: f64 = p.next()?.parse().ok()?;
+    let z: f64 = p.next()?.parse().ok()?;
+    Some((world, dim, [x, y, z]))
+}
+
+/// Where the base is on the map: pixels right and down of the centre, and the
+/// distance. `bpp` is blocks per map pixel, `half` the map's half side;
+/// a base off the map is pinned to its edge, in its direction.
+pub fn base_dot(
+    from: [f64; 3],
+    base: [f64; 3],
+    yaw: f32,
+    rotate: bool,
+    round: bool,
+    bpp: f32,
+    half: f32,
+) -> (f32, f32, f32) {
+    let dx = base[0] - from[0];
+    let dz = base[2] - from[2];
+    let dist = dx.hypot(dz) as f32;
+    let (mut sx, mut sy) = if rotate {
+        let r = f64::from(yaw).to_radians();
+        let (fx, fz) = (-r.sin(), r.cos());
+        let (rx, rz) = (-r.cos(), -r.sin());
+        ((dx * rx + dz * rz) as f32, -((dx * fx + dz * fz) as f32))
+    } else {
+        (dx as f32, dz as f32)
+    };
+    sx /= bpp;
+    sy /= bpp;
+    let limit = half - 3.0;
+    if round {
+        let d = sx.hypot(sy);
+        if d > limit {
+            sx *= limit / d;
+            sy *= limit / d;
+        }
+    } else {
+        let m = sx.abs().max(sy.abs());
+        if m > limit {
+            sx *= limit / m;
+            sy *= limit / m;
+        }
+    }
+    (sx, sy, dist)
 }
 
 #[cfg(test)]

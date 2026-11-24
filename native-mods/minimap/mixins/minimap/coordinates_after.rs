@@ -122,4 +122,37 @@ fn coordinates_after(
         batch.text(atlas, text, tx, ty, rgba(255, 255, 255, 255), true);
         batch.scale_since(start, tx, ty, 0.5, 0.5);
     });
+    // The marked base: a red dot with a white rim, and its distance under it.
+    let dot = *crate::game::official_minimap::BASE_DOT
+        .lock()
+        .unwrap_or_else(|e| e.into_inner());
+    if let Some((ox, oy, dist)) = dot {
+        let i = Corner::ALL
+            .iter()
+            .position(|c| *c == look.corner)
+            .unwrap_or(0);
+        let mx = if look.corner.left() {
+            2.0
+        } else {
+            corners.width - 2.0 - look.size
+        };
+        let my = if look.corner.top() {
+            corners.used[i] - look.size
+        } else {
+            corners.height - corners.used[i]
+        };
+        let cx = (mx + look.size / 2.0 + ox).round();
+        let cy = (my + look.size / 2.0 + oy).round();
+        batch.fill(atlas, cx - 3.0, cy - 3.0, 6.0, 6.0, rgba(255, 255, 255, 255));
+        batch.fill(atlas, cx - 2.0, cy - 2.0, 4.0, 4.0, rgba(230, 40, 40, 255));
+        let text = format!("Base {}m", dist.round() as i64);
+        let width = HudBatch::text_width(atlas, &text) * 0.5;
+        let tx = (cx - width / 2.0)
+            .clamp(mx, mx + look.size - width)
+            .round();
+        let ty = (cy + 5.0).min(my + look.size - 7.0);
+        let start = batch.vertices.len();
+        batch.text(atlas, &text, tx, ty, rgba(255, 255, 255, 255), true);
+        batch.scale_since(start, tx, ty, 0.5, 0.5);
+    }
 }

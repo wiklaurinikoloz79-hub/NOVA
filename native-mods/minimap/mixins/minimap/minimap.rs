@@ -7,6 +7,7 @@ fn minimap_view(
     use horizon_client::extras::Corner;
     use horizon_client::extras_hud::minimap_coordinates::COORDINATES;
     COORDINATES.with(|c| *c.borrow_mut() = None);
+    *m::BASE_DOT.lock().unwrap_or_else(|e| e.into_inner()) = None;
     horizon_client::extras_hud::minimap_coordinates::OUTLINE.with(|s| s.set((0, false)));
     // Turned off in Options > Mods: nothing until the next build leaves it out.
     if minimap.is_some() || !game.native_on(m::ID) {
@@ -30,6 +31,22 @@ fn minimap_view(
     horizon_client::extras_hud::minimap_coordinates::OUTLINE
         .with(|s| s.set((settings.outline, settings.round)));
     let (size, blocks_per_pixel) = settings.view();
+    // The marked base, as a dot on the map (the page: Mark base here).
+    if let (Some(base), Some(cam)) = (game.native_setting(m::ID, "base"), game.native_camera()) {
+        if let Some((_, dim, pos)) = m::parse_base(&base) {
+            if dim == cam.dimension {
+                *m::BASE_DOT.lock().unwrap_or_else(|e| e.into_inner()) = Some(m::base_dot(
+                    cam.position,
+                    pos,
+                    cam.yaw,
+                    settings.rotate,
+                    settings.round,
+                    blocks_per_pixel,
+                    size / 2.0,
+                ));
+            }
+        }
+    }
     *minimap = Some(crate::game::native_hooks::NativeMinimap {
         corner: [
             Corner::TopLeft,
